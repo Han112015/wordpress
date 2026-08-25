@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Liquid Glass</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 25px;
+      background: url("https://media.512pixels.net/downloads/macos-wallpapers-thumbs/27-Golden-Gate-thumb.jpg") center center / cover no-repeat;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      overflow: hidden;
+      user-select: none;
+    }
+
+    .liquidGlass-wrapper {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem 3.5rem;
+      border-radius: 2.5rem;
+      overflow: hidden;
+      cursor: pointer;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3), 0 0 20px rgba(0, 0, 0, 0.15);
+      transform-origin: center center;
+      will-change: transform;
+      transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.4);
+    }
+
+    .liquidGlass-wrapper.is-pressed {
+      transform: scale(1.1) scaleX(1.03);
+      transition: transform 0.15s cubic-bezier(0.25, 1, 0.5, 1);
+    }
+
+    .liquidGlass-effect {
+      position: absolute;
+      z-index: 0;
+      inset: 0;
+      backdrop-filter: blur(4px);
+      filter: url(#glass-distortion);
+      overflow: hidden;
+      isolation: isolate;
+      pointer-events: none;
+    }
+
+    .liquidGlass-tint {
+      z-index: 1;
+      position: absolute;
+      inset: 0;
+      background: rgba(255, 255, 255, 0.2);
+      pointer-events: none;
+    }
+
+    .liquidGlass-shine {
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+      border-radius: inherit;
+      box-shadow: inset 2px 2px 2px 0 rgba(255, 255, 255, 0.6),
+                  inset -1.5px -1.5px 2px 1px rgba(255, 255, 255, 0.4);
+      pointer-events: none;
+    }
+
+    .liquidGlass-text {
+      z-index: 3;
+      font-size: 1.8rem;
+      font-weight: 600;
+      color: #ffffff;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+      text-align: center;
+    }
+
+    .intro-block {
+      max-width: 550px;
+      padding: 2rem 2.5rem;
+    }
+
+    .intro-block .liquidGlass-text {
+      font-size: 1.1rem;
+      font-weight: 400;
+      line-height: 1.6;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="liquidGlass-wrapper">
+    <div class="liquidGlass-effect"></div>
+    <div class="liquidGlass-tint"></div>
+    <div class="liquidGlass-shine"></div>
+    <div class="liquidGlass-text">Liquid Glass</div>
+  </div>
+
+  <div class="liquidGlass-wrapper intro-block">
+    <div class="liquidGlass-effect"></div>
+    <div class="liquidGlass-tint"></div>
+    <div class="liquidGlass-shine"></div>
+    <div class="liquidGlass-text">
+      Đây là 1 ví dụ về Liquid Glass HTML, Liquid Glass là 1 giao diện hiệu ứng kính lỏng của Apple được code bằng ngôn ngữ swift nhằm mục đích tạo ra thiết kế mới để người dùng trải nghiệm trên iOS 26 của họ.
+    </div>
+  </div>
+
+  <svg style="display: none">
+    <filter id="glass-distortion" x="0%" y="0%" width="100%" height="100%" filterUnits="objectBoundingBox">
+      <feTurbulence type="fractalNoise" baseFrequency="0.01 0.01" numOctaves="1" seed="5" result="turbulence"></feTurbulence>
+      <feComponentTransfer in="turbulence" result="mapped">
+        <feFuncR type="gamma" amplitude="1" exponent="10" offset="0.5"></feFuncR>
+        <feFuncG type="gamma" amplitude="0" exponent="1" offset="0"></feFuncG>
+        <feFuncB type="gamma" amplitude="0" exponent="1" offset="0.5"></feFuncB>
+      </feComponentTransfer>
+      <feGaussianBlur in="turbulence" stdDeviation="3" result="softMap"></feGaussianBlur>
+      <feSpecularLighting in="softMap" surfaceScale="5" specularConstant="1" specularExponent="100" lighting-color="white" result="specLight">
+        <fePointLight x="-200" y="-200" z="300"></fePointLight>
+      </feSpecularLighting>
+      <feComposite in="specLight" operator="arithmetic" k1="0" k2="1" k3="1" k4="0" result="litImage"></feComposite>
+      <feDisplacementMap in="SourceGraphic" in2="softMap" scale="150" xChannelSelector="R" yChannelSelector="G"></feDisplacementMap>
+    </filter>
+  </svg>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const glassBlocks = document.querySelectorAll('.liquidGlass-wrapper');
+      glassBlocks.forEach(block => {
+        const handlePress = () => block.classList.add('is-pressed');
+        const handleRelease = () => block.classList.remove('is-pressed');
+
+        block.addEventListener('mousedown', handlePress);
+        block.addEventListener('mouseup', handleRelease);
+        block.addEventListener('mouseleave', handleRelease);
+
+        block.addEventListener('touchstart', handlePress, { passive: true });
+        block.addEventListener('touchend', handleRelease);
+        block.addEventListener('touchcancel', handleRelease);
+      });
+    });
+  </script>
+</body>
+</html>
